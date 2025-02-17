@@ -7,9 +7,8 @@ const createIssue = async (req, res) => {
     try {
         const data = issueSchema.create.parse(req.body);
 
-        // Check if the project exists
         const projectExists = await prisma.project.findUnique({
-            where: { project_id: data.projectId }, // ✅ Ensure correct field
+            where: { project_id: data.projectId },
         });
 
         if (!projectExists) {
@@ -19,9 +18,8 @@ const createIssue = async (req, res) => {
             });
         }
 
-        // Check if the user exists
         const userExists = await prisma.user.findUnique({
-            where: { userId: data.reportedById }, // ✅ Ensure correct field
+            where: { userId: data.reportedById },
         });
 
         if (!userExists) {
@@ -31,13 +29,12 @@ const createIssue = async (req, res) => {
             });
         }
 
-        // Create the issue
         const newIssue = await prisma.issue.create({
             data: {
                 title: data.title,
                 description: data.description,
-                projectId: data.projectId,  // ✅ Corrected field
-                reportedById: data.reportedById, // ✅ Ensure correct field
+                projectId: data.projectId,
+                reportedById: data.reportedById,
                 priority: data.priority || "MEDIUM",
             },
         });
@@ -47,7 +44,6 @@ const createIssue = async (req, res) => {
             message: "Issue created successfully",
             data: newIssue,
         });
-
     } catch (error) {
         return res.status(400).json({
             success: false,
@@ -55,10 +51,6 @@ const createIssue = async (req, res) => {
         });
     }
 };
-
-
-
-
 
 const getAllIssues = async (req, res) => {
     try {
@@ -85,9 +77,7 @@ const getSingleIssue = async (req, res) => {
     try {
         const issueId = req.params.id;
         const issue = await prisma.issue.findUnique({
-            where: {
-                issue_id: issueId
-            },
+            where: { issue_id: issueId },
             include: {
                 project: true,
                 reportedBy: true,
@@ -118,9 +108,7 @@ const updateIssue = async (req, res) => {
         const data = issueSchema.update.parse(req.body);
         
         const isIssueExist = await prisma.issue.findUnique({
-            where: {
-                issue_id: issueId,
-            },
+            where: { issue_id: issueId },
         });
         if (!isIssueExist) {
             return res.status(404).json({
@@ -130,12 +118,8 @@ const updateIssue = async (req, res) => {
         }
 
         const updatedIssue = await prisma.issue.update({
-            where: {
-                issue_id: issueId
-            },
-            data: {
-                ...data
-            }
+            where: { issue_id: issueId },
+            data: { ...data }
         });
         return res.status(200).json({
             success: true,
@@ -154,20 +138,16 @@ const deleteIssue = async (req, res) => {
     try {
         const issueId = req.params.id;
         const isIssueExist = await prisma.issue.findUnique({
-            where: {
-                issue_id: issueId,
-            },
+            where: { issue_id: issueId },
         });
         if (!isIssueExist) {
-            return res .status(404).json({
+            return res.status(404).json({
                 success: false,
                 message: "Issue not found",
             });
         }
         await prisma.issue.delete({
-            where: {
-                issue_id: issueId,
-            },
+            where: { issue_id: issueId },
         });
         return res.status(200).json({
             success: true,

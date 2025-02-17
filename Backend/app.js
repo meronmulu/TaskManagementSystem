@@ -12,7 +12,7 @@ const issuesRoutes = require("./src/api/issues/issues.routes");
 const notificationRoutes = require("./src/api/notification/notification.routes");
 
 const app = express();
-const server = createServer(app); // Create an HTTP server
+const server = createServer(app); 
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -22,7 +22,6 @@ const io = new Server(server, {
 
 app.use(express.json()); 
 
-// Store io instance globally so controllers can use it
 app.set("io", io);
 
 // WebSockets connection
@@ -38,14 +37,12 @@ io.on("connection", (socket) => {
     });
 });
 
-// Correct API Routes
 app.use("/api/users", useRoutes);
 app.use("/api/projects", projectRoutes);
-app.use("/api/tasks", taskRoutes); // FIXED TYPO (taskss → tasks)
+app.use("/api/tasks", taskRoutes); 
 app.use("/api/issues", issuesRoutes);
 app.use("/api/notifications", notificationRoutes);
 
-// FIX: Use `server.listen()` instead of `app.listen()`
 server.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

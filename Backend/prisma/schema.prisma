@@ -43,7 +43,7 @@ enum NotificationType {
 }
 
 model User {
-    userId         String       @id @default(uuid()) // ✅ Ensure String ID
+    userId         String       @id @default(uuid()) 
     name           String         
     email          String       @unique
     password       String
@@ -57,12 +57,12 @@ model User {
 }
 
 model Project {
-    project_id      String      @id @default(uuid()) // ✅ Ensure String ID
+    project_id      String      @id @default(uuid()) 
     project_name    String 
     description     String?     
     status          Status      @default(PENDING)
-    createdBy       User        @relation(fields: [createdById], references: [userId]) // ✅ Fix relation
-    createdById     String      // ✅ Change to String to match User.userId
+    createdBy       User        @relation(fields: [createdById], references: [userId]) 
+    createdById     String      
     tasks           Task[]
     issues          Issue[]
     createdAt       DateTime    @default(now())
@@ -70,40 +70,40 @@ model Project {
 }
 
 model Task {
-    task_id        String   @id @default(uuid()) // ✅ Ensure String ID
+    task_id        String   @id @default(uuid()) 
     title          String
     description    String?       
     status         Status   @default(PENDING)
     priority       Priority @default(MEDIUM) 
     project        Project  @relation(fields: [projectId], references: [project_id])
-    projectId      String  // ✅ Ensure String type
+    projectId      String  
     assignedTo     User?    @relation(fields: [assignedToId], references: [userId])
-    assignedToId   String?  // ✅ Change to String to match User.userId
+    assignedToId   String?  
     dueDate        DateTime
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt  
 }
 
 model Issue {
-    issue_id       String   @id @default(uuid())  // ✅ Ensure String ID
+    issue_id       String   @id @default(uuid())  
     title          String
     description    String?       
     status         IssueStatus @default(OPEN)
     priority       Priority @default(MEDIUM) 
     project        Project  @relation(fields: [projectId], references: [project_id]) 
-    projectId      String // ✅ Ensure String type
+    projectId      String 
     reportedBy     User     @relation(fields: [reportedById], references: [userId]) 
-    reportedById   String  // ✅ Change to String to match User.userId
+    reportedById   String 
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
 }
 
 model Notification {
-    notification_id String      @id @default(uuid()) // ✅ Ensure String ID
+    notification_id String      @id @default(uuid()) 
     message         String   
     type            NotificationType
     user            User        @relation(fields: [userId], references: [userId])  
-    userId          String      // ✅ Change to String to match User.userId
+    userId          String     
     isRead          Boolean     @default(false)
     createdAt       DateTime    @default(now())
 }

@@ -22,7 +22,7 @@ const taskSchema = {
         priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
         dueDate: z.preprocess((val) => {
         if (typeof val === "string") {
-            return new Date(val); // Convert "YYYY-MM-DD" to Date object
+            return new Date(val); 
         }
         return val;
     }, z.date()), 

@@ -6,12 +6,11 @@ require("dotenv").config();
 
 const prisma = new PrismaClient();
 
-// ✅ Register User
+
 const createUser = async (req, res) => {
     try {
         const data = userSchema.create.parse(req.body);
 
-        // Check if email already exists
         const existingUser = await prisma.user.findUnique({  
             where: {
                  email: data.email
@@ -24,7 +23,6 @@ const createUser = async (req, res) => {
                 message: "Email already registered" });
         }
 
-        // Hash password
         data.password = await bcrypt.hash(data.password, 10);
 
         const user = await prisma.user.create({ data });
@@ -40,7 +38,7 @@ const createUser = async (req, res) => {
     }
 };
 
-// ✅ Login User
+
 const loginUser = async (req, res) => {
     try {
         const { email, password } = userSchema.login.parse(req.body);
@@ -57,7 +55,6 @@ const loginUser = async (req, res) => {
         }
         
 
-        // Generate JWT Token
         const token = jwt.sign({ userId: user.userId, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
         res.status(200).json({
@@ -71,7 +68,7 @@ const loginUser = async (req, res) => {
     }
 };
 
-// ✅ Get All Users (Only ADMIN)
+
 const getAllUsers = async (req, res) => {
     try {
         const users = await prisma.user.findMany();
@@ -95,7 +92,7 @@ const getUserById = async (req, res) => {
 
         const user = await prisma.user.findUnique({
             where: {
-                userId: id, // Use userId instead of id
+                userId: id, 
             },
         });
 
@@ -111,13 +108,11 @@ const getUserById = async (req, res) => {
 };
 
 
-// ✅ Update User (Only ADMIN or the user themselves)
 const updateUser = async (req, res) => {
-    const { id } = req.params; // id is a string (UUID)
-    const { user } = req; // Extract logged-in user
+    const { id } = req.params; 
+    const { user } = req; 
 
     try {
-        // Ensure the logged-in user is either ADMIN or updating their own profile
         if (user.role !== "ADMIN" && user.userId !== id) {
             return res.status(403).json({
                 success: false,
@@ -127,7 +122,6 @@ const updateUser = async (req, res) => {
 
         const data = userSchema.create.partial().parse(req.body);
 
-        // Check if the email is being updated and already exists
         if (data.email) {
             const existingUser = await prisma.user.findUnique({
                 where: { email: data.email },
@@ -141,7 +135,6 @@ const updateUser = async (req, res) => {
             }
         }
 
-        // Hash password if updated
         if (data.password) {
             data.password = await bcrypt.hash(data.password, 10);
         }
@@ -162,12 +155,11 @@ const updateUser = async (req, res) => {
 };
 
 
-// ✅ Delete User (Only ADMIN)
 const deleteUser = async (req, res) => {
-    const { id } = req.params; // Extract user ID from URL
+    const { id } = req.params; 
 
     try {
-        // Check if the user exists
+        
         const user = await prisma.user.findUnique({
             where: { userId: id },
         });
@@ -179,7 +171,6 @@ const deleteUser = async (req, res) => {
             });
         }
 
-        // Delete the user
         await prisma.user.delete({
             where: { userId: id },
         });

@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 const createProject = async (req, res) => {
     try {
-        // ✅ Ensure the user exists
+      
         const userExists = await prisma.user.findUnique({
             where: { userId: req.user.userId },
         });
@@ -18,14 +18,14 @@ const createProject = async (req, res) => {
         }
         console.log("Project Schema:", projectSchema);
 
-        // ✅ Validate request body using Zod
+        
         const data = projectSchema.create.parse(req.body);
 
-        // ✅ Create the project
+       
         const newProject = await prisma.project.create({
             data: {
                 ...data,
-                createdById: req.user.userId, // Ensure creator ID is valid
+                createdById: req.user.userId, 
             },
         });
 
@@ -89,7 +89,7 @@ const getSingleProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
     try {
-        const projectId = req.params.id; // Fixed 'param' to 'params'
+        const projectId = req.params.id; 
         const data = projectSchema.update.parse(req.body);
         const isProjectExist = await prisma.project.findUnique({
             where: {
@@ -125,7 +125,7 @@ const updateProject = async (req, res) => {
 
 const deleteProject = async (req, res) => {
     try {
-        const projectId = req.params.id; // Fixed 'param' to 'params'
+        const projectId = req.params.id; 
         const isProjectExist = await prisma.project.findUnique({
             where: {
                 project_id: projectId,

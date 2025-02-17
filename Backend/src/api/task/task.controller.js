@@ -68,7 +68,7 @@ const assignUserToTask = async (req, res) => {
     
             // Update task with assigned user
             const updatedTask = await prisma.task.update({
-                where: { task_id: taskId }, // ✅ Ensure correct field name
+                where: { task_id: taskId }, // 
                 data: { assignedToId },
             });
     
@@ -137,19 +137,24 @@ const getSingleTask = async (req, res) => {
     }
 };
 
-// ✅ Update Task
+
 const updateTask = async (req, res) => {
      try {
         const taskId = req.params.id;
         const data = taskSchema.update.parse(req.body);
 
-        // Ensure task exists
-        const taskExists = await prisma.task.findUnique({ where: { task_id: taskId } });
+        
+        const taskExists = await prisma.task.findUnique({
+             where: { 
+                task_id: taskId
+             } 
+            });
+
         if (!taskExists) {
             return res.status(404).json({ success: false, message: "Task does not exist" });
         }
 
-        // Update task
+       
         const updatedTask = await prisma.task.update({
             where: { task_id: taskId },
             data: { ...data },
@@ -169,18 +174,18 @@ const updateTask = async (req, res) => {
     }
 };
 
-// ✅ Delete Task
+
 const deleteTask = async (req, res) => {
     try {
         const taskId = req.params.id;
 
-        // Ensure task exists
+       
         const taskExists = await prisma.task.findUnique({ where: { task_id: taskId } });
         if (!taskExists) {
             return res.status(404).json({ success: false, message: "Task not found" });
         }
 
-        // Delete task
+      
         const deletedTask = await prisma.task.delete({ where: { task_id: taskId } });
 
         return res.status(200).json({
