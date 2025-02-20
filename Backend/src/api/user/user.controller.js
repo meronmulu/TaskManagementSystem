@@ -69,7 +69,6 @@ const loginUser = async (req, res) => {
     }
 };
 
-// ✅ Get All Users (Only ADMIN)
 const getAllUsers = async (req, res) => {
     try {
         const users = await prisma.user.findMany();
@@ -85,53 +84,68 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        if (!id) {
-            return res.status(400).json({ success: false, message: "User ID is required" });
-        }
+        const userId =parseInt(req.params.id);
 
         const user = await prisma.user.findUnique({
             where: {
-                userId: id, // Use userId instead of id
+                userId: userId, 
             },
+            include: {
+                projects: true,
+                tasks: true,
+                issues: true,
+                    
+            }
         });
 
         if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
+            return res.status(404).json({ 
+                success: false,
+                message: "User not found"
+             });
         }
 
-        res.status(200).json({ success: true, user });
+        res.status(200).json({ 
+            success: true, 
+            message: "users retrieved successfully",
+            data: user,
+             
+        });
     } catch (error) {
-        console.error("Error fetching user by ID:", error);
-        res.status(500).json({ success: false, message: "Server error", error: error.message });
+        res.status(500).json({ 
+            success: false, 
+            message: "Server error",
+             error: error.message 
+        });
     }
 };
 
 
-// ✅ Update User (Only ADMIN or the user themselves)
-const updateUser = async (req, res) => {
-    const { id } = req.params; // id is a string (UUID)
-    const { user } = req; // Extract logged-in user
 
+const updateUser = async (req, res) => {
     try {
-        // Ensure the logged-in user is either ADMIN or updating their own profile
-        if (user.role !== "ADMIN" && user.userId !== id) {
-            return res.status(403).json({
+        const userId = parseInt(req.params.id);
+        const data = userSchema.update.parse(req.body);
+
+        const existingUser = await prisma.user.findUnique({
+            where: { userId },
+        });
+
+        if (!existingUser) {
+            return res.status(404).json({
                 success: false,
-                message: "Access denied. You can only update your own profile.",
+                message: "User not found.",
             });
         }
 
-        const data = userSchema.create.partial().parse(req.body);
+       
 
-        // Check if the email is being updated and already exists
         if (data.email) {
-            const existingUser = await prisma.user.findUnique({
+            const existingUserWithEmail = await prisma.user.findUnique({
                 where: { email: data.email },
             });
 
-            if (existingUser && existingUser.userId !== id) {
+            if (existingUserWithEmail && existingUserWithEmail.userId !== userId) {
                 return res.status(400).json({
                     success: false,
                     message: "Email already in use by another user.",
@@ -139,13 +153,12 @@ const updateUser = async (req, res) => {
             }
         }
 
-        // Hash password if updated
         if (data.password) {
             data.password = await bcrypt.hash(data.password, 10);
         }
 
         const updatedUser = await prisma.user.update({
-            where: { userId: id },
+            where: { userId },
             data,
         });
 
@@ -155,19 +168,24 @@ const updateUser = async (req, res) => {
             data: updatedUser,
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({
+            success: false,
+            message: `Error: ${error.message}`,
+        });
     }
 };
 
 
-// ✅ Delete User (Only ADMIN)
-const deleteUser = async (req, res) => {
-    const { id } = req.params; // Extract user ID from URL
 
+
+
+const deleteUser = async (req, res) => {
     try {
-        // Check if the user exists
+
+        const userId = parseInt(req.params.id);
+
         const user = await prisma.user.findUnique({
-            where: { userId: id },
+            where: { userId: userId },
         });
 
         if (!user) {
@@ -179,7 +197,7 @@ const deleteUser = async (req, res) => {
 
         // Delete the user
         await prisma.user.delete({
-            where: { userId: id },
+            where: { userId: userId },
         });
 
         res.status(200).json({
