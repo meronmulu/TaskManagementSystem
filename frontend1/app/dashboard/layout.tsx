@@ -1,5 +1,6 @@
 import { Image } from "@heroui/react";
 import Navbar from "../component/Navbar";
+import Menu from "../component/Menu";
 
 export default function DashboardLayout({
   children,
@@ -12,7 +13,7 @@ export default function DashboardLayout({
         {/* LEFT PART */}
         <div className="w-[16%]  md:w-[8%] lg:w-[16%] py-2 px-4  border-r border-gray-200  bg-white  ">
           <Image src="/Taskfulll.gif"  alt=""   className="py-2 px-4"/>
-
+          <Menu/>
         </div>
 
 
