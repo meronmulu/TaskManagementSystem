@@ -1,6 +1,7 @@
 import { Button } from '@heroui/react'
 import React from 'react'
-import Table from '../../../component/Table'
+
+import UserTable from '@/app/component/Table/UserTable'
 
 const IssueManagment = () => {
   return (
@@ -9,7 +10,7 @@ const IssueManagment = () => {
           <Button radius="none" className='bg-[#6256E3]'>Add issue</Button>
         </div>
         <div>
-          <Table/>
+          <UserTable/>
         </div>
     </div>
   )

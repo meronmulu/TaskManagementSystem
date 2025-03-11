@@ -1,6 +1,7 @@
 import React from 'react'
-import Table from '../../../component/Table'
+
 import { Button } from '@heroui/react'
+import UserTable from '@/app/component/Table/UserTable'
 
 const ProjectManegment = () => {
   return (
@@ -9,7 +10,7 @@ const ProjectManegment = () => {
       <Button radius="none" className='bg-[#6256E3]'>Add Project</Button>
     </div>
     <div>
-      <Table/>
+      <UserTable/>
     </div>
 </div>
   )

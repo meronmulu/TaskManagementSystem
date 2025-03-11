@@ -1,6 +1,7 @@
+import UserTable from '@/app/component/Table/UserTable'
 import { Button } from '@heroui/react'
 import React from 'react'
-import Table from '../../../component/Table'
+
 
 const TaskManagement = () => {
   return (
@@ -9,7 +10,7 @@ const TaskManagement = () => {
       <Button radius="none" className='bg-[#6256E3]'>Create Task</Button>
     </div>
     <div>
-      <Table/>
+      <UserTable/>
     </div>
 </div>
   )

@@ -1,22 +1,24 @@
-"use client "
-import { Button} from '@heroui/react'
-import React from 'react'
-import Table from '../../../component/Table'
-import Link from 'next/link'
-import UsersTable from '@/app/component/Table/UserTable'
-// import gg  from '../../../component/form/user'
+"use client";
+
+import { Button } from '@heroui/react';
+import React from 'react';
+import Link from 'next/link';
+
+import UsersTable from '@/app/component/Table/UserTable';
+
 
 const UserManegment = () => {
   return (
     <div className='flex flex-col'>
-        <Link href='/components/form/user' className='flex m-5'>
-          <Button radius="none" className='bg-[#6256E3]'>Add User</Button>
-        </Link>
-        <div>
-          <UsersTable/>
-        </div>
+      <Link href='/component/form/createUser' className='flex m-5'>
+        <Button radius="none" className='bg-[#6256E3] text-white'>Add User</Button>
+      </Link>
+      <div>
+        <UsersTable />
+      
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserManegment
+export default UserManegment;

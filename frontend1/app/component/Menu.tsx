@@ -10,7 +10,7 @@ import BugReportIcon from "@mui/icons-material/BugReport";
     
     const  items = [
       {
-        icon: <DashboardIcon className="text-gray-500" />, // Apply styles here
+        icon: <DashboardIcon className="text-gray-500" />, 
         label: 'Dashboard',
         href: '',
         visible: ['admin'],

@@ -15,7 +15,7 @@ const Navbar = () => {
             </div>
           </div>
           {/* <ThemeSwitcher/> */}
-          <Button className='bg-[#6256E3]'>Logout</Button>
+          <Button className='bg-[#6256E3] text-white'>Logout</Button>
         </div>
       </div>
     </div>
