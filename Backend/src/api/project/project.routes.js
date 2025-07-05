@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 router.post("/create-project", authenticateUser, authorizeRoles("ADMIN", "MANAGER"), createProject);
-router.get("/projects", authenticateUser, authorizeRoles("ADMIN", "MANAGER"), getAllProjects);
+router.get("/projects", authenticateUser, authorizeRoles("ADMIN", "MANAGER","EMPLOYEE"), getAllProjects);
 router.get("/project/:id", authenticateUser, authorizeRoles("ADMIN", "MANAGER"), getSingleProject);
 router.put("/update-project/:id", authenticateUser, authorizeRoles("ADMIN"), updateProject);
 router.delete("/delete-project/:id", authenticateUser, authorizeRoles("ADMIN"), deleteProject);

@@ -39,29 +39,66 @@ const createProject = async (req, res) => {
 };
 
 const getAllProjects = async (req, res) => {
-    try {
-        const projects = await prisma.project.findMany({
-            include: {
-                tasks: true, 
-                issues: true, 
-            },
-            orderBy: {
-                createdAt: "desc",
-            },
-        });
+  try {
+    const user = req.user; // comes from auth middleware (make sure it's set correctly)
+    const role = user.role;
+    const userId = user.id;
 
-        res.status(200).json({
-            success: true,
-            message: "Fetching all projects",
-            data: projects,
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: `Error: ${error.message}`,
-        });
+    let projects;
+
+    if (role === "ADMIN" || role === "MANAGER") {
+      // Show all projects
+      projects = await prisma.project.findMany({
+        include: {
+          tasks: true,
+          issues: true
+        },
+        orderBy: {
+          createdAt: "desc"
+        }
+      });
+    } else if (role === "EMPLOYEE") {
+      // Show only projects where this employee has tasks
+      projects = await prisma.project.findMany({
+        where: {
+          tasks: {
+            some: {
+              assignedToId: userId // adjust if your field is named differently
+            }
+          }
+        },
+        include: {
+          tasks: {
+            where: {
+              assignedToId: userId
+            }
+          },
+          issues: true
+        },
+        orderBy: {
+          createdAt: "desc"
+        }
+      });
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized role."
+      });
     }
+
+    res.status(200).json({
+      success: true,
+      message: "Fetching projects",
+      data: projects
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Error: ${error.message}`
+    });
+  }
 };
+
 
 const getSingleProject = async (req, res) => {
     try {

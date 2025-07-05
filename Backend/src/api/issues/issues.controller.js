@@ -37,10 +37,10 @@ const createIssue = async (req, res) => {
         const newIssue = await prisma.issue.create({
             data: {
                 ...data,
-                reportedById: req.user.userId,
             },
             include: {
                 project: true,
+                reportedBy: true,
             }
         });
 
@@ -61,7 +61,8 @@ const getAllIssues = async (req, res) => {
     try {
         const issues = await prisma.issue.findMany({
             include: {
-                project: true
+                project: true,
+                reportedBy: true,
             },
             orderBy: {
                 createdAt: "desc",
@@ -82,37 +83,30 @@ const getAllIssues = async (req, res) => {
 };
 
 const getSingleIssue = async (req, res) => {
-    try {
-        const issueId = parseInt(req.params.id);
+  try {
+    const issueId = parseInt(req.params.id);
 
-        const issue = await prisma.issue.findUnique({
-            where: { 
-                issue_id   : issueId 
-            },
-            include: {
-                project: true,
-            },
-        });
+    const issue = await prisma.issue.findUnique({
+      where: { issue_id: issueId },
+      include: {
+        project: true,       // ✅ include full project data
+        reportedBy: true     // ✅ include reported user
+      }
+    });
 
-        if (!issue) {
-            return res.status(404).json({
-                success: false,
-                message: "issue not found",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "issue retrieved successfully",
-            data: issue,
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: `Error: ${error.message}`,
-        });
+    if (!issue) {
+      return res.status(404).json({ success: false, message: "Issue not found" });
     }
+
+    return res.status(200).json({ success: true, data: issue });
+
+  } catch (error) {
+    console.error("Error fetching issue:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
 };
+
+
 
 const updateissue= async (req, res) => {
     try {

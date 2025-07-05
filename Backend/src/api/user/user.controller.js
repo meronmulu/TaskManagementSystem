@@ -11,16 +11,17 @@ const createUser = async (req, res) => {
         const data = userSchema.create.parse(req.body);
 
         // Check if email already exists
-        const existingUser = await prisma.user.findUnique({  
+        const existingUser = await prisma.user.findUnique({
             where: {
-                 email: data.email
-                 },
+                email: data.email
+            },
         });
 
         if (existingUser) {
-            return res.status(400).json({ 
-                success: false, 
-                message: "Email already registered" });
+            return res.status(400).json({
+                success: false,
+                message: "Email already registered"
+            });
         }
 
         // Hash password
@@ -48,15 +49,19 @@ const loginUser = async (req, res) => {
         if (!user) {
             return res.status(401).json({ success: false, message: "User not found" });
         }
-        
+
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({ success: false, message: "Invalid password" });
         }
-        
 
-        // Generate JWT Token
-        const token = jwt.sign({ userId: user.userId, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+       
+        const token = jwt.sign(
+            { userId: user.userId, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
 
         res.status(200).json({
             success: true,
@@ -84,38 +89,38 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
-        const userId =parseInt(req.params.id);
+        const userId = parseInt(req.params.id);
 
         const user = await prisma.user.findUnique({
             where: {
-                userId: userId, 
+                userId: userId,
             },
             include: {
                 projects: true,
                 tasks: true,
                 issues: true,
-                    
+
             }
         });
 
         if (!user) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
                 message: "User not found"
-             });
+            });
         }
 
-        res.status(200).json({ 
-            success: true, 
+        res.status(200).json({
+            success: true,
             message: "users retrieved successfully",
             data: user,
-             
+
         });
     } catch (error) {
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             message: "Server error",
-             error: error.message 
+            error: error.message
         });
     }
 };
@@ -138,7 +143,7 @@ const updateUser = async (req, res) => {
             });
         }
 
-       
+
 
         if (data.email) {
             const existingUserWithEmail = await prisma.user.findUnique({

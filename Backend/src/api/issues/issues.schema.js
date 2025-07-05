@@ -14,6 +14,8 @@ const issueSchema ={
         description: z.string().optional(),
         status: z.enum(["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"]),
         priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
+        projectId: z.number().int().positive("Project ID must be a valid positive integer"),
+        reportedById: z.number().int().positive("Reporter ID must be a valid positive integer"),
     })
 }
    
