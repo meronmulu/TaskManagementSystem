@@ -60,6 +60,18 @@ export const getTaskById = async (task_id: number): Promise<Task | null> => {
     }
 };
 
+export const getTasksByUser = async (userId: number): Promise<Task[] | null> => {
+    try {       
+        const res = await instance.get(`/tasks/by-user/${userId}`);
+        console.log(res.data); // <--- this logs the actual response
+        return res.data;       // <--- returns Task[] or possibly undefined/null
+    } catch (error: any) {
+        console.error("Error fetching tasks by user:", error.response?.data || error.message);
+        return null;
+    }
+}
+
+
 export const updateTask = async (task_id: number, task: Partial<Task>) => {
 
     try {

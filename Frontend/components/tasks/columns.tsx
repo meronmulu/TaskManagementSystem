@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useAuth } from "@/context/AuthContext";
 
 export const getUserColumns = (
   setTask: React.Dispatch<React.SetStateAction<Task[]>>
@@ -97,6 +98,8 @@ export const getUserColumns = (
       const [openAssign, setOpenAssign] = useState(false);
       const [users, setUsers] = useState<User[]>([]);
       const [selectedUserId, setSelectedUserId] = useState<string>("");
+      const { user } = useAuth();
+      const role = user?.role?.toUpperCase();
 
       const confirmDelete = async () => {
         try {
@@ -159,7 +162,8 @@ export const getUserColumns = (
       return (
         <>
           {/* Dropdown Menu */}
-          <DropdownMenu>
+          
+           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0 dark:text-white">
                 <span className="sr-only">Open menu</span>
@@ -170,19 +174,25 @@ export const getUserColumns = (
               <DropdownMenuLabel className="dark:text-white">
                 Actions
               </DropdownMenuLabel>
+              {role !== "EMPLOYEE" && (
               <DropdownMenuItem onClick={() => setOpenAssign(true)}>
                 Assign User
               </DropdownMenuItem>
+              )}
               <Link
                 href={`/dashboard/project/${task.projectId}/task/${task.task_id}`}
               >
                 <DropdownMenuItem>Edit</DropdownMenuItem>
               </Link>
+              {role !== "EMPLOYEE" && (
               <DropdownMenuItem onClick={() => setOpenDelete(true)}>
                 Delete
               </DropdownMenuItem>
+            )}
             </DropdownMenuContent>
           </DropdownMenu>
+          
+          
 
           {/* Delete Dialog */}
           <Dialog open={openDelete} onOpenChange={setOpenDelete}>

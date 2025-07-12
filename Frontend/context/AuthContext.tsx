@@ -19,13 +19,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   
 
   // login method now takes credentials and calls your login service
- const login = async (credentials: { email: string; password: string }): Promise<boolean> => {
+const login = async (credentials: { email: string; password: string }): Promise<boolean> => {
   try {
     const res = await UserService.login(credentials);
     if (res?.token && res?.user) {
       localStorage.setItem('token', res.token);
       localStorage.setItem('user', JSON.stringify(res.user));
       setUser(res.user);
+
+      // ✅ Store the first assigned project_id
+      const firstProject = res.user.projects?.[0];
+      if (firstProject?.project_id) {
+        localStorage.setItem('projectId', String(firstProject.project_id));
+      } else {
+        localStorage.removeItem('projectId'); // fallback
+      }
+
       return true;
     }
     return false;
@@ -33,6 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return false;
   }
 };
+
 
 
   const logout = () => {

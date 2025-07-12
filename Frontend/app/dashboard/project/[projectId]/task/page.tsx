@@ -16,14 +16,18 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useAuth } from "@/context/AuthContext";
+import { Input } from "@/components/ui/input";
+ 
 
 export default function TaskPage() {
   const params = useParams();
-  console.log("Route Params:", params);
-
+  // console.log("Route Params:", params);
   const projectId = Number(params.projectId);
-
   const [tasks, setTasks] = useState<Task[]>([]);
+  const { user } = useAuth();
+  const role = user?.role?.toUpperCase();
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (!projectId || isNaN(projectId)) {
@@ -44,10 +48,17 @@ export default function TaskPage() {
     fetchTasks();
   }, [projectId]);
 
+ const filteredTasks = tasks.filter((task) =>
+    task.title.toLowerCase().includes(searchTerm.toLowerCase()) 
+  );
+
+
+
   return (
-    <div className="container mx-auto py-10">
-      <div className="mb-4">
-        <Breadcrumb>
+    <div className="relative mx-auto w-full bg-white  rounded-xl mt-8">
+      <div className="grid grid-cols-2 mb-4  p-5">
+        <div>
+            <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href={`/dashboard/project`}>
@@ -60,17 +71,33 @@ export default function TaskPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+        </div>
+
+        <div className=" flex  flex-row justify-end gap-4">
+        <Input
+          placeholder="Search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="md:w-1/2 w-1/2  bg-white"
+        />
+       
+      
+      {role !== "EMPLOYEE" && (
+        <div className="mb-4 mr-4 flex justify-end">
+          <Button>
+            <Link href={`/dashboard/project/${projectId}/task/create`}>
+              + Task
+            </Link>
+          </Button>
+        </div>
+      )}
       </div>
-      <div className="mb-4 mr-4 flex justify-end">
-        <Button>
-          <Link href={`/dashboard/project/${projectId}/task/create`}>
-            + Task
-          </Link>
-        </Button> 
       </div>
+      
+
       <DataTable<Task, unknown>
         columns={getUserColumns(setTasks)}
-        data={tasks}
+        data={filteredTasks}
       />
     </div>
   );

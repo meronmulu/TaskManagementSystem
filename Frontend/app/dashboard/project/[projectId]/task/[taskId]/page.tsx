@@ -98,6 +98,7 @@ const EditTask = () => {
       console.error("Task update failed");
     }
   };
+  
 
   return (
     <div className="p-5">

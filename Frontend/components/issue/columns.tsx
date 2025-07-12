@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { deleteIssue } from "@/service/IssueService";
+import { useAuth } from "@/context/AuthContext";
 
 export const getUserColumns = (
   setIssue: React.Dispatch<React.SetStateAction<Issue[]>>
@@ -74,12 +75,16 @@ export const getUserColumns = (
     cell: ({ row }) => {
       const issue = row.original;
       const [open, setOpen] = useState(false);
+      const { user } = useAuth();
+      const role = user?.role?.toUpperCase();
 
       const confirmDelete = async () => {
         try {
           const success = await deleteIssue(issue.issue_id);
           if (success) {
-           setIssue((prev) => prev.filter((u) => u.issue_id !== issue.issue_id));
+            setIssue((prev) =>
+              prev.filter((u) => u.issue_id !== issue.issue_id)
+            );
           } else {
             alert("Failed to delete issue");
           }
@@ -104,17 +109,16 @@ export const getUserColumns = (
               <DropdownMenuLabel className="dark:text-white">
                 Actions
               </DropdownMenuLabel>
-              
-                <Link href={`/dashboard/issue/${issue.issue_id}`}>
-                <DropdownMenuItem>
-                    Edit
-                </DropdownMenuItem>
-                </Link>
-              
 
-              <DropdownMenuItem onClick={() => setOpen(true)}>
-                Delete
-              </DropdownMenuItem>
+              <Link href={`/dashboard/issue/${issue.issue_id}`}>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+              </Link>
+
+              {role !== "EMPLOYEE" && (
+                <DropdownMenuItem onClick={() => setOpen(true)}>
+                  Delete
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
 

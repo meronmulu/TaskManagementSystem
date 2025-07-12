@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { deleteProject } from "@/service/ProjectService";
+import { useAuth } from "@/context/AuthContext";
 
 export const getUserColumns = (
   setProject: React.Dispatch<React.SetStateAction<Project[]>>
@@ -61,6 +62,10 @@ export const getUserColumns = (
     cell: ({ row }) => {
       const project = row.original;
       const [open, setOpen] = useState(false);
+      const { user } = useAuth();
+      const role = user?.role?.toUpperCase();
+
+
 
 
       const confirmDelete = async () => {
@@ -98,13 +103,19 @@ export const getUserColumns = (
               <Link href={`/dashboard/project/${project.project_id}/task`}>
                 <DropdownMenuItem>task</DropdownMenuItem>
               </Link>
+              {role === "ADMIN" && (
+                <>
+                <Link href={`/dashboard/project/${project.project_id}`}>
+                  <DropdownMenuItem>Edit</DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem onClick={() => setOpen(true)}>
+                    Delete
+                  </DropdownMenuItem>
+                </>
+              )}
 
-              <Link href={`/dashboard/project/${project.project_id}`}>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-              </Link>
-              <DropdownMenuItem onClick={() => setOpen(true)}>
-                Delete
-              </DropdownMenuItem>
+              
+              
             </DropdownMenuContent>
           </DropdownMenu>
 

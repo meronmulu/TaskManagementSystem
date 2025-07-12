@@ -117,150 +117,158 @@ const CreateIssues = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 md:w-[60%] md:p-20 p-10"
+            className="space-y-4  md:p-20 p-10"
           >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter issue title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="issue description..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Status Select */}
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="OPEN">OPEN</SelectItem>
-                        <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                        <SelectItem value="RESOLVED">RESOLVED</SelectItem>
-                        <SelectItem value="CLOSED">CLOSED</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Priority Select */}
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Priority</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a priority" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="LOW">Low</SelectItem>
-                        <SelectItem value="MEDIUM">Medium</SelectItem>
-                        <SelectItem value="HIGH">High</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="projectId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Project</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={String(field.value)}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a project" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {projects.length ? (
-                          projects.map((project) => (
-                            <SelectItem
-                              key={project.project_id}
-                              value={String(project.project_id)}
-                            >
-                              {project.project_name}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <p>No project found</p>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="reportedBy"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Reported By</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={String(field.value)}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a user" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {users.map((user) => (
-                          <SelectItem
-                            key={user.userId}
-                            value={String(user.userId)}
-                          >
-                            {user.name}
+            <div className="sm:grid sm:grid-cols-2 space-y-6 md:space-y-0 gap-5">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter issue title" {...field} className="md:w-[90%]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="md:w-[90%]">
+                          <SelectValue placeholder="Select a status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="OPEN">OPEN</SelectItem>
+                          <SelectItem value="IN_PROGRESS">
+                            In Progress
                           </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                          <SelectItem value="RESOLVED">RESOLVED</SelectItem>
+                          <SelectItem value="CLOSED">CLOSED</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:grid sm:grid-cols-2 space-y-6 md:space-y-0 gap-5">
+              <FormField
+                control={form.control}
+                name="projectId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={String(field.value)}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="md:w-[90%]">
+                          <SelectValue placeholder="Select a project" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {projects.length ? (
+                            projects.map((project) => (
+                              <SelectItem
+                                key={project.project_id}
+                                value={String(project.project_id)}
+                              >
+                                {project.project_name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <p>No project found</p>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Priority</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="md:w-[90%]">
+                          <SelectValue placeholder="Select a priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="LOW">Low</SelectItem>
+                          <SelectItem value="MEDIUM">Medium</SelectItem>
+                          <SelectItem value="HIGH">High</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:grid sm:grid-cols-2 space-y-6 md:space-y-0 gap-5">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="issue description..." {...field} className="md:w-[90%]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="reportedBy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Reported By</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={String(field.value)}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="md:w-[90%]">
+                          <SelectValue placeholder="Select a user" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {users.map((user) => (
+                            <SelectItem
+                              key={user.userId}
+                              value={String(user.userId)}
+                            >
+                              {user.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <Button type="submit">Create Issue</Button>
           </form>

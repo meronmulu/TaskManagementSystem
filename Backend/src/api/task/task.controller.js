@@ -2,6 +2,7 @@ const {PrismaClient}  = require("@prisma/client");
 const prisma =  new PrismaClient();
 const{ taskSchema} = require("./task.schema");
 const { sendNotification } = require("../notification/notification.controller");
+const { notifyTaskCompletion } = require("../notification/notification.controller");
 
 
 const createTask = async (req, res) => {
@@ -137,10 +138,11 @@ const getSingleTask = async (req, res) => {
   
 }
 
+
 const updateTask = async (req, res) => {
   try {
     const taskId = parseInt(req.params.id);
-    const validateData = taskSchema.update.parse(req.body); 
+    const validateData = taskSchema.update.parse(req.body);
 
     const existingTask = await prisma.task.findUnique({
       where: { task_id: taskId },
@@ -154,9 +156,18 @@ const updateTask = async (req, res) => {
       where: { task_id: taskId },
       data: validateData,
       include: {
-        assignedTo: true, // ✅ Include related user
+        assignedTo: true,
       },
     });
+
+    // ✅ Notify admin/manager if employee completes the task
+    if (
+      req.user?.role === "EMPLOYEE" &&
+      existingTask.status !== "COMPLETED" &&
+      validateData.status === "COMPLETED"
+    ) {
+      await notifyTaskCompletion(taskId, req);
+    }
 
     res.status(200).json({
       success: true,
@@ -172,12 +183,19 @@ const updateTask = async (req, res) => {
 };
 
 
+
+const NotificationType = {
+  TASK_ASSIGNED: "TASK_ASSIGNED",
+  ISSUE_REPORTED: "ISSUE_REPORTED",
+  TASK_COMPLETED: "TASK_COMPLETED",
+  DEADLINE_APPROACHING: "DEADLINE_APPROACHING",
+  GENERAL_NOTIFICATION: "GENERAL_NOTIFICATION",
+};
+
 const assignTask = async (req, res) => {
   try {
     const { assignedToId } = req.body;
     const { id: taskId } = req.params;
-
-    console.log("Assigning task ID:", taskId, "to user ID:", assignedToId);
 
     if (!taskId || !assignedToId || isNaN(taskId) || isNaN(assignedToId)) {
       return res.status(400).json({
@@ -191,21 +209,7 @@ const assignTask = async (req, res) => {
     });
 
     if (!taskExists) {
-      return res.status(404).json({
-        success: false,
-        message: "Task not found",
-      });
-    }
-
-    const userExists = await prisma.user.findUnique({
-      where: { userId: Number(assignedToId) },
-    });
-
-    if (!userExists) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+      return res.status(404).json({ success: false, message: "Task not found" });
     }
 
     const updatedTask = await prisma.task.update({
@@ -213,18 +217,13 @@ const assignTask = async (req, res) => {
       data: { assignedToId: Number(assignedToId) },
     });
 
+    // ✅ Send notification
     await sendNotification(
       assignedToId,
       `You have been assigned a new task: ${updatedTask.title}`,
-      "TASK",
+      NotificationType.TASK_ASSIGNED,
       req
     );
-
-    const io = req.app.get("io");
-    io.to(`user_${assignedToId}`).emit("taskAssigned", {
-      message: `You have been assigned a new task: ${updatedTask.title}`,
-      task: updatedTask,
-    });
 
     return res.status(200).json({
       success: true,
@@ -235,7 +234,7 @@ const assignTask = async (req, res) => {
     console.error("Error assigning task:", error);
     return res.status(500).json({
       success: false,
-      message: `Error - ${error.message}`,
+      message: error.message,
     });
   }
 };
@@ -320,7 +319,40 @@ const getTasksByProject = async (req, res) => {
   }
 };
 
+const getTasksByUser = async (req, res) => {
+  try {
+    const userId = parseInt(req.params.userId);
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid user ID" });
+    }
+
+    const tasks = await prisma.task.findMany({
+      where: {
+        assignedToId: userId,
+      },
+      include: {
+        project: {
+          select: {
+            project_id: true,
+            project_name: true,
+          },
+        },
+        assignedTo: {
+          select: {
+            userId: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json(tasks);
+  } catch (error) {
+    console.error("Error fetching tasks by user:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 
-
-module.exports = {createTask,getAllTasks,getSingleTask,updateTask,deleteTask,assignTask,getTasksByProject}
+module.exports = {createTask,getAllTasks,getSingleTask,updateTask,deleteTask,assignTask,getTasksByProject,getTasksByUser}

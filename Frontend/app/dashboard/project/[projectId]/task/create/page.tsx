@@ -105,126 +105,136 @@ const CreateTask = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 md:w-[60%] md:p-20 p-10"
+            className="space-y-4  md:p-20 p-10"
           >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter task title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Task description..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PENDING">Pending</SelectItem>
-                        <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                        <SelectItem value="COMPLETED">Completed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Priority</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a priority" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="LOW">Low</SelectItem>
-                        <SelectItem value="MEDIUM">Medium</SelectItem>
-                        <SelectItem value="HIGH">High</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="projectId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Project</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={String(field.value)}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a project" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {projects.map((proj) => (
-                          <SelectItem
-                            key={proj.project_id}
-                            value={String(proj.project_id)}
-                          >
-                            {proj.project_name}
+            <div className="sm:grid sm:grid-cols-2 space-y-6 md:space-y-0 gap-5">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter task title" {...field}  className="md:w-[90%]"/>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger  className="md:w-[90%]">
+                          <SelectValue placeholder="Select a status"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="PENDING">Pending</SelectItem>
+                          <SelectItem value="IN_PROGRESS">
+                            In Progress
                           </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                          <SelectItem value="COMPLETED">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:grid sm:grid-cols-2 space-y-6 md:space-y-0 gap-5">
+              <FormField
+                control={form.control}
+                name="projectId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={String(field.value)}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger  className="md:w-[90%]">
+                          <SelectValue placeholder="Select a project"  />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {projects.map((proj) => (
+                            <SelectItem
+                              key={proj.project_id}
+                              value={String(proj.project_id)}
+                            >
+                              {proj.project_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Priority</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger  className="md:w-[90%]">
+                          <SelectValue placeholder="Select a priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="LOW">Low</SelectItem>
+                          <SelectItem value="MEDIUM">Medium</SelectItem>
+                          <SelectItem value="HIGH">High</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="sm:grid sm:grid-cols-2 space-y-6 md:space-y-0 gap-5">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Task description..." {...field} className="md:w-[90%]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="dueDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Due Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="dueDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Due Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} className="md:w-[90%]" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <Button type="submit">Create Task</Button>
           </form>
